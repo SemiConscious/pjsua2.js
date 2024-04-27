@@ -1,9 +1,9 @@
-export * from '../swig/Magick++';
+export * from '../swig/pjsua2';
 
-declare module '../swig/Magick++' {
+declare module '../swig/pjsua2' {
   namespace std {
     interface coderInfoArray {
-      [Symbol.iterator](): Iterator<Magick.CoderInfo>;
+      [Symbol.iterator](): Iterator<Pjsua2.CoderInfo>;
     }
   }
 }

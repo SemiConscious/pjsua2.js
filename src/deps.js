@@ -3,8 +3,7 @@ const fs = require('fs');
 const child = require('child_process');
 
 const dirs = [
-  'deps/ImageMagick/Magick++/lib',
-  'deps/ImageMagick'
+  'deps/pjproject'
 ];
 
 if (process.argv.length < 5) {

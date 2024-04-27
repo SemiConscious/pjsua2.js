@@ -1,8 +1,8 @@
-declare const IM: Promise<typeof import('../swig/Magick++')>
+declare const IM: Promise<typeof import('../swig/pjsua2')>
 
 declare type FSMode = 'r' | 'r+' | 'w' | 'wx' | 'w+' | 'wx+' | 'a' | 'ax' | 'a+' | 'ax+';
 
-declare module '../swig/Magick++' {
+declare module '../swig/pjsua2' {
   namespace FS {
     function open(path: string, mode?: FSMode): unknown;
     function close(file: unknown): void;

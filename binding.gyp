@@ -33,7 +33,7 @@
   'targets': [
     {
       # The main binary target - both native or WASM
-      'target_name': 'magickwand',
+      'target_name': 'pjsua2',
       'include_dirs': [
         '<!@(node -p "require(\'node-addon-api\').include")',
         '<(module_root_dir)'
@@ -84,18 +84,18 @@
           ],
           'ldflags': [
             # This one is used for unit testing, it is only 4Kb
-		        '--embed-file=<(module_root_dir)/test/data/wizard.gif@wizard.gif',
+		        # '--embed-file=<(module_root_dir)/test/data/wizard.gif@wizard.gif',
             # These are needed by ImageMagick
-            '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/policy.xml@policy.xml',
-            '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/colors.xml@colors.xml',
-            '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/log.xml@log.xml',
-            '--embed-file=<(module_path)/ImageMagick/share/ImageMagick-7/locale.xml@locale.xml',
-            '--embed-file=<(module_path)/ImageMagick/share/ImageMagick-7/english.xml@english.xml',
+            # '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/policy.xml@policy.xml',
+            # '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/colors.xml@colors.xml',
+            # '--embed-file=<(module_path)/ImageMagick/etc/ImageMagick-7/log.xml@log.xml',
+            # '--embed-file=<(module_path)/ImageMagick/share/ImageMagick-7/locale.xml@locale.xml',
+            # '--embed-file=<(module_path)/ImageMagick/share/ImageMagick-7/english.xml@english.xml',
             # SWIG Node-API uses exceptions extensively (for now, an exception-less version is coming)
 		        '-sNO_DISABLE_EXCEPTION_CATCHING',
             # We live in the ES6 / bundlers era - these produce a bundler-friendly ES6
             '-sMODULARIZE',
-            '-sEXPORT_NAME=Magick',
+            '-sEXPORT_NAME=pjsua2',
             '-sEXPORT_ES6',
             '-sUSE_ES6_IMPORT_META',
             # Node.js has its own native modules and Node.js compatibility
@@ -118,20 +118,20 @@
           ]
         }],
         # Link against a system-installed ImageMagick
-        ['shared_imagemagick == "true"', {
-          'libraries': [ '<@(magicklibs)' ]
+        ['shared_pjsua2 == "true"', {
+          'libraries': [ '<@(pjsua2libs)' ]
         }],
         # Link against the included ImageMagick
-        ['shared_imagemagick == "false"', {
-          'dependencies': [ 'deps/imagemagick.gyp:imagemagick' ],
+        ['shared_pjsua2 == "false"', {
+          'dependencies': [ 'deps/pjsua2.gyp:pjsua2' ],
         }],
         # These defines must be present when building
-        ['enable_hdri == "false"', {
-          'defines': [ 'MAGICKCORE_HDRI_ENABLE=0', 'MAGICKCORE_QUANTUM_DEPTH=16' ],
-        }],
-        ['enable_hdri == "true"', {
-          'defines': [ 'MAGICKCORE_HDRI_ENABLE=1', 'MAGICKCORE_QUANTUM_DEPTH=16' ],
-        }],
+        # ['enable_hdri == "false"', {
+        #   'defines': [ 'MAGICKCORE_HDRI_ENABLE=0', 'MAGICKCORE_QUANTUM_DEPTH=16' ],
+        # }],
+        # ['enable_hdri == "true"', {
+        #   'defines': [ 'MAGICKCORE_HDRI_ENABLE=1', 'MAGICKCORE_QUANTUM_DEPTH=16' ],
+        # }],
         # Regenerate the SWIG wrappers when needed (this is currently broken)
         ['enable_hdri!="true" or regen_swig=="true"', {
           'actions': [{
@@ -148,15 +148,18 @@
               }]
             ],
             'action_name': 'swig_wrappers',
-            'inputs': [ 'src/Magick++.i' ],
-            'outputs': [ 'swig/magickwand.js.cxx' ],
+            'inputs': [ 'deps/pjsua2/pjsip-apps/src/swig/pjsua2.i' ],
+            'outputs': [ 'swig/pjsua2.js.cxx' ],
             'action': [
               'swig', '-javascript', '-typescript', '-napi', '-c++',
-              '-Ideps/ImageMagick/Magick++/lib', '-Ideps/ImageMagick',
+              '-Ideps/pjsua2/pjlib/include',
+              '-Ideps/pjsua2/pjmedia/include',
+              '-Ideps/pjsua2/pjnath/include',
+              '-Ideps/pjsua2/pjsip/include',
               '<@(hdri)',
-              '-o', 'swig/Magick++.cxx',
+              '-o', 'swig/pjsua2.cxx',
               '-outdir', 'swig',
-              'src/Magick++.i'
+              'deps/pjsua2/pjsip-apps/src/swig/pjsua2.i'
             ]
           }]
         }]
@@ -178,7 +181,7 @@
           'copies': [
             {
               'files': [
-                '<(PRODUCT_DIR)/magickwand.node'
+                '<(PRODUCT_DIR)/pjsua.node'
               ],
               'destination': '<(module_path)'
             }
@@ -202,9 +205,9 @@
           'copies': [
             {
               'files': [
-                '<(PRODUCT_DIR)/magickwand.js',
-                '<(PRODUCT_DIR)/magickwand.worker.js',
-                '<(PRODUCT_DIR)/magickwand.wasm'
+                '<(PRODUCT_DIR)/pjsua2.js',
+                '<(PRODUCT_DIR)/pjsua2.worker.js',
+                '<(PRODUCT_DIR)/pjsua2.wasm'
               ],
               'destination': '<(module_path)'
             }
@@ -216,10 +219,10 @@
           'type': 'none',
           'actions': [{
             'action_name': 'dummy_action_wasm',
-            'inputs': [ '<(PRODUCT_DIR)/magickwand.js' ],
+            'inputs': [ '<(PRODUCT_DIR)/pjsua2.js' ],
             'outputs': [
-              '<(PRODUCT_DIR)/magickwand.wasm',
-              '<(PRODUCT_DIR)/magickwand.worker.js'
+              '<(PRODUCT_DIR)/pjsua2.wasm',
+              '<(PRODUCT_DIR)/pjsua2.worker.js'
             ],
             'action': [ 'true' ]
           }]

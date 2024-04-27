@@ -1,7 +1,7 @@
 {
   'variables': {
     'target_platform%': 'OS',
-    'shared_imagemagick%': 'false',
+    # 'shared_imagemagick%': 'false',
     'enable_hdri%': 'true',
     'enable_asan%': 'false',
     'regen_swig%': 'false',

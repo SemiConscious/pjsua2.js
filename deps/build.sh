@@ -3,8 +3,9 @@
 unset MAKEFLAGS
 unset SDKROOT
 
-cd ImageMagick
+cd pjproject
 
 make -j4
 make install
-rm -rf $1/ImageMagick/lib/*.*a
+# XXX
+rm -rf $1/pjproject/lib/*.*a

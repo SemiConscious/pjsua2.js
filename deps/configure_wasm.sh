@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec 3>&1 4>&2 >../build/magick_configure.log 2>&1
+exec 3>&1 4>&2 >../build/configure.log 2>&1
 
 unset MAKEFLAGS
 unset SDKROOT
@@ -13,7 +13,7 @@ EMSDK_PATH=`cat ../conan/conan_emsdk.path`
 
 cd ImageMagick
 # Do not include the utilities which increase the size of the npm package
-emconfigure ./configure $2 --prefix=$1/ImageMagick          \
+emconfigure ./configure $2 --prefix=$1/pjproject            \
     --disable-installed                                     \
     --disable-shared --enable-static                        \
     --without-utilities --without-perl                      \

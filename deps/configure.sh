@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec 3>&1 4>&2 >../build/magick_configure.log 2>&1
+exec 3>&1 4>&2 >../build/configure.log 2>&1
 
 CONFIGURE_OPTS=""
 if [ "$3" == "False" ]; then
@@ -18,7 +18,7 @@ export PKG_CONFIG_LIBDIR=$(pwd)/../conan
 
 cd ImageMagick
 # Do not include the utilities which increase the size of the npm package
-sh ./configure $2 --prefix=$1/ImageMagick                   \
+sh ./configure $2 --prefix=$1/pjproject                     \
     --disable-installed                                     \
     --disable-shared --enable-static                        \
     --without-utilities --without-perl                      \
@@ -34,4 +34,4 @@ cd ../..
 
 exec 1>&3 2>&4
 
-echo -n "${X11_LIBS} ${XEXT_LIBS}"
+echo -n "X libs: ${X11_LIBS} ${XEXT_LIBS}"
