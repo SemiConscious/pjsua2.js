@@ -1,0 +1,9 @@
+[submodule "deps/ImageMagick"]
+	path = deps/ImageMagick
+	url = https://github.com/ImageMagick/ImageMagick.git
+[submodule "deps/ImageMagick-Windows"]
+	path = deps/ImageMagick-Windows
+	url = https://github.com/ImageMagick/ImageMagick-Windows
+[submodule "deps/pjproject"]
+	path = deps/pjproject
+	url = https://github.com/pjsip/pjproject

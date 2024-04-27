@@ -1,0 +1,19 @@
+{
+    "configurations": [ 
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/deps/ImageMagick/Magick++/lib",
+                "${workspaceFolder}/deps/ImageMagick/MagickWand",
+                "${workspaceFolder}/deps/ImageMagick",
+                "${workspaceFolder}"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}
