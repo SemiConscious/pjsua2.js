@@ -13,7 +13,7 @@ const generated_path = path.resolve(__dirname, '..', 'swig');
 const deps_path = path.resolve(__dirname, '..', 'deps');
 
 fs.mkdirSync(generated_path, { recursive: true });
-const data = fs.readFileSync(path.resolve(deps_path, 'pjproject', 'pjsip_apps', 'src', 'swig', 'pjsua2.i'), 'utf8').replace(/\r\n/g, '\n');
+const data = fs.readFileSync(path.resolve(deps_path, 'pjproject', 'pjsip-apps', 'src', 'swig', 'pjsua2.i'), 'utf8').replace(/\r\n/g, '\n');
 fs.writeFileSync(path.resolve(generated_path, 'pjsua2.i'), data);
 
 // const hash = crypto.createHash('md5');
