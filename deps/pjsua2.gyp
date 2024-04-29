@@ -7,6 +7,8 @@
     # Debug builds on Windows require manually adjusting these
     'winbuildtype%': '/p:Configuration=Release,Platform=x64',
     'winlibid%': 'RL',
+    'pjsua2defines%': [],
+    'pjsua2libs%': []
   },
   'conditions': [
     ['target_platform == "emscripten"', {
