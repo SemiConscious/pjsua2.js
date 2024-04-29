@@ -67,10 +67,12 @@
               #   ],
               # }],
               ['target_platform != "emscripten"', {
-                'action': [ 'sh', '<(module_root_dir)/deps/build.sh', '<(module_path)', '<(hdri)' ]
+                # 'action': [ 'sh', '<(module_root_dir)/deps/build.sh', '<(module_path)', '<(hdri)' ]
+                'action': [ 'sh', '<(module_root_dir)/deps/build.sh', '<(module_path)' ]
               }],
               ['target_platform == "emscripten"', {
-                'action': [ 'bash', '<(module_root_dir)/deps/build_wasm.sh', '<(module_path)', '<(hdri)' ]
+                # 'action': [ 'bash', '<(module_root_dir)/deps/build_wasm.sh', '<(module_path)', '<(hdri)' ]
+                'action': [ 'bash', '<(module_root_dir)/deps/build_wasm.sh', '<(module_path)' ]
               }],
             ]
           }
@@ -90,10 +92,12 @@
           ],
           'conditions': [
             ['target_platform != "emscripten"', {
-              'libraries': [ '<!@(bash configure.sh <(module_path) <(hdri) <(display))' ]
+              # 'libraries': [ '<!@(bash configure.sh <(module_path) <(hdri) <(display))' ]
+              'libraries': [ '<!@(bash configure.sh <(module_path))' ]
             }],
             ['target_platform == "emscripten"', {
-              'libraries': [ '<!@(bash configure_wasm.sh <(module_path) <(hdri))' ]
+              # 'libraries': [ '<!@(bash configure_wasm.sh <(module_path) <(hdri))' ]
+              'libraries': [ '<!@(bash configure_wasm.sh <(module_path))' ]
             }]
           ]
         },
