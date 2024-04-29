@@ -9,7 +9,7 @@
     'winlibid%': 'RL',
     'pjsua2defines%': [],
     'pjsua2libs%': [],
-    'outputs%': ['<(module_root_dir)/deps/pjproject/.libs/pjsua2.a']
+    # 'outputs%': ['<(module_root_dir)/deps/pjproject/.libs/pjsua2.a']
   },
   'conditions': [
     ['target_platform == "emscripten"', {
