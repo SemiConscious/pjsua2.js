@@ -153,14 +153,14 @@
             'outputs': [ 'swig/pjsua2.js.cxx' ],
             'action': [
               'swig', '-javascript', '-typescript', '-napi', '-c++',
-              '-Ideps/pjsua2/pjlib/include',
-              '-Ideps/pjsua2/pjmedia/include',
-              '-Ideps/pjsua2/pjnath/include',
-              '-Ideps/pjsua2/pjsip/include',
+              '-Ideps/pjproject/pjlib/include',
+              '-Ideps/pjproject/pjmedia/include',
+              '-Ideps/pjproject/pjnath/include',
+              '-Ideps/pjproject/pjsip/include',
               # '<@(hdri)',
               '-o', 'swig/pjsua2.cxx',
               '-outdir', 'swig',
-              'deps/pjsua2/pjsip-apps/src/swig/pjsua2.i'
+              'deps/pjproject/pjsip-apps/src/swig/pjsua2.i'
             ]
           }]
         }]
@@ -190,45 +190,45 @@
         }
       ]
     }],
-    ['target_platform == "emscripten"', {
-      # WASM does not support an external ImageMagick
-      # builtins pulls conan and emsdk
-      # wasm enables the cross-compilation
-      'includes': [
-        'conan/conan_compiler.gypi'
-      ],
-      'targets': [
-        {
-          # Copy the final binary WASM
-          'target_name': 'action_after_build',
-          'type': 'none',
-          'dependencies': [ '<(module_name)', 'dummy_produce_wasm' ],
-          'copies': [
-            {
-              'files': [
-                '<(PRODUCT_DIR)/pjsua2.js',
-                '<(PRODUCT_DIR)/pjsua2.worker.js',
-                '<(PRODUCT_DIR)/pjsua2.wasm'
-              ],
-              'destination': '<(module_path)'
-            }
-          ]
-        },
-        {
-          # Dummy action to signal gyp that .wasm is produced with .js
-          'target_name': 'dummy_produce_wasm',
-          'type': 'none',
-          'actions': [{
-            'action_name': 'dummy_action_wasm',
-            'inputs': [ '<(PRODUCT_DIR)/pjsua2.js' ],
-            'outputs': [
-              '<(PRODUCT_DIR)/pjsua2.wasm',
-              '<(PRODUCT_DIR)/pjsua2.worker.js'
-            ],
-            'action': [ 'true' ]
-          }]
-        }
-      ]
-    }]
+    # ['target_platform == "emscripten"', {
+    #   # WASM does not support an external ImageMagick
+    #   # builtins pulls conan and emsdk
+    #   # wasm enables the cross-compilation
+    #   'includes': [
+    #     'conan/conan_compiler.gypi'
+    #   ],
+    #   'targets': [
+    #     {
+    #       # Copy the final binary WASM
+    #       'target_name': 'action_after_build',
+    #       'type': 'none',
+    #       'dependencies': [ '<(module_name)', 'dummy_produce_wasm' ],
+    #       'copies': [
+    #         {
+    #           'files': [
+    #             '<(PRODUCT_DIR)/pjsua2.js',
+    #             '<(PRODUCT_DIR)/pjsua2.worker.js',
+    #             '<(PRODUCT_DIR)/pjsua2.wasm'
+    #           ],
+    #           'destination': '<(module_path)'
+    #         }
+    #       ]
+    #     },
+    #     {
+    #       # Dummy action to signal gyp that .wasm is produced with .js
+    #       'target_name': 'dummy_produce_wasm',
+    #       'type': 'none',
+    #       'actions': [{
+    #         'action_name': 'dummy_action_wasm',
+    #         'inputs': [ '<(PRODUCT_DIR)/pjsua2.js' ],
+    #         'outputs': [
+    #           '<(PRODUCT_DIR)/pjsua2.wasm',
+    #           '<(PRODUCT_DIR)/pjsua2.worker.js'
+    #         ],
+    #         'action': [ 'true' ]
+    #       }]
+    #     }
+    #   ]
+    # }]
   ]
 }
