@@ -157,7 +157,7 @@
               '-Ideps/pjsua2/pjmedia/include',
               '-Ideps/pjsua2/pjnath/include',
               '-Ideps/pjsua2/pjsip/include',
-              '<@(hdri)',
+              # '<@(hdri)',
               '-o', 'swig/pjsua2.cxx',
               '-outdir', 'swig',
               'deps/pjsua2/pjsip-apps/src/swig/pjsua2.i'
