@@ -74,9 +74,10 @@ class ImageMagickDelegates(ConanFile):
 
       # Fonts are not available on WASM targets
       if self.options.fonts and self.settings.arch != 'wasm':
-        [self.requires(x, force=True) for x in (
-          'glib/2.78.1'
-        )]
+        self.requires('glib/2.78.1')
+        # [self.requires(x, force=True) for x in (
+        #   'glib/2.78.1'
+        # )]
 
       # LZMA is blocked by https://github.com/conan-io/conan-center-index/issues/20602
       if self.options.lzma and self.settings.arch != 'wasm':
