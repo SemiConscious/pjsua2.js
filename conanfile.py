@@ -101,59 +101,59 @@ class ImageMagickDelegates(ConanFile):
       if self.options.gzip:
         self.requires('zlib/1.2.13')
 
-      if self.options.fftw:
-        self.requires('fftw/3.3.10')
+      # if self.options.fftw:
+      #   self.requires('fftw/3.3.10')
 
-      if self.options.color:
-        self.requires('lcms/2.14')
+      # if self.options.color:
+      #   self.requires('lcms/2.14')
 
-      if self.options.xml:
-        self.requires('libxml2/2.10.4')
+      # if self.options.xml:
+      #   self.requires('libxml2/2.10.4')
 
-      if self.options.openmedia:
-        self.requires('libaom-av1/3.6.0')
+      # if self.options.openmedia:
+      #   self.requires('libaom-av1/3.6.0')
 
-      if self.options.h265:
-        self.requires('libde265/1.0.12')
+      # if self.options.h265:
+      #   self.requires('libde265/1.0.12')
 
-      if self.options.heif:
-        self.requires('libheif/1.13.0')
+      # if self.options.heif:
+      #   self.requires('libheif/1.13.0')
 
-      if self.options.jbig:
-        self.requires('jbig/20160605')
+      # if self.options.jbig:
+      #   self.requires('jbig/20160605')
 
-      if self.options.exr:
-        self.requires('openexr/3.1.5')
+      # if self.options.exr:
+      #   self.requires('openexr/3.1.5')
 
-      if self.options.png:
-        self.requires('libpng/1.6.42')
+      # if self.options.png:
+      #   self.requires('libpng/1.6.42')
 
-      if self.options.webp:
-        self.requires('libwebp/1.3.2')
+      # if self.options.webp:
+      #   self.requires('libwebp/1.3.2')
 
-      if self.options.jpeg2000 or self.options.tiff or self.options.raw:
-        self.requires('libjpeg-turbo/3.0.2', force=True)
+      # if self.options.jpeg2000 or self.options.tiff or self.options.raw:
+      #   self.requires('libjpeg-turbo/3.0.2', force=True)
 
-      if self.options.jpeg2000:
-        self.requires('jasper/4.0.0')
+      # if self.options.jpeg2000:
+      #   self.requires('jasper/4.0.0')
 
-      if self.options.tiff:
-        self.requires('libtiff/4.6.0')
+      # if self.options.tiff:
+      #   self.requires('libtiff/4.6.0')
 
       if self.options.raw:
         self.requires('libraw/0.21.2')
 
-      if self.options.jpeg:
-        self.requires('openjpeg/2.5.0')
+      # if self.options.jpeg:
+      #   self.requires('openjpeg/2.5.0')
 
       if self.options.simd and self.settings.arch != 'wasm':
         self.requires('highway/1.0.3')
 
-      if self.options.openmp and self.settings.arch != 'wasm':
-        self.requires('llvm-openmp/12.0.1')
+      # if self.options.openmp and self.settings.arch != 'wasm':
+      #   self.requires('llvm-openmp/12.0.1')
 
-      if self.options.display and self.settings.arch != 'wasm':
-        self.requires('pixman/0.40.0')
+      # if self.options.display and self.settings.arch != 'wasm':
+      #   self.requires('pixman/0.40.0')
 
     def configure(self):
       if self.settings.arch != 'wasm' and self.options.fonts:
