@@ -157,9 +157,10 @@ class ImageMagickDelegates(ConanFile):
       # #   self.requires('pixman/0.40.0')
 
     def configure(self):
-      if self.settings.arch != 'wasm' and self.options.fonts:
-        self.options['glib'].shared = False
-        self.options['glib'].fPIC = True
+       return
+      # if self.settings.arch != 'wasm' and self.options.fonts:
+      #   self.options['glib'].shared = False
+      #   self.options['glib'].fPIC = True
 
       # self.options['jasper'].with_libjpeg = 'libjpeg-turbo'
       # self.options['libtiff'].jpeg = 'libjpeg-turbo'
@@ -167,12 +168,12 @@ class ImageMagickDelegates(ConanFile):
 
       # While Emscripten supports SIMD, Node.js does not and cannot run the resulting WASM bundle
       # The performance gain is not very significant and it has a huge compatibility issue
-      if self.options.webp and (self.settings.arch == 'wasm' or not self.options.simd):
-        self.options['libwebp'].with_simd = False
+      # if self.options.webp and (self.settings.arch == 'wasm' or not self.options.simd):
+      #   self.options['libwebp'].with_simd = False
       
       # When building with emscripten, the main exe is called zstd.js and all symlinks are broken
-      if self.settings.arch == 'wasm' and self.options.zstd:
-        self.options['zstd'].build_programs = False
+      # if self.settings.arch == 'wasm' and self.options.zstd:
+      #   self.options['zstd'].build_programs = False
 
     def generate(self):
       aggregated_cpp_info = CppInfo(self)
