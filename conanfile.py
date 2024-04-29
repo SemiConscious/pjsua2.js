@@ -160,9 +160,9 @@ class ImageMagickDelegates(ConanFile):
         self.options['glib'].shared = False
         self.options['glib'].fPIC = True
 
-      self.options['jasper'].with_libjpeg = 'libjpeg-turbo'
-      self.options['libtiff'].jpeg = 'libjpeg-turbo'
-      self.options['libraw'].with_jpeg = 'libjpeg-turbo'
+      # self.options['jasper'].with_libjpeg = 'libjpeg-turbo'
+      # self.options['libtiff'].jpeg = 'libjpeg-turbo'
+      # self.options['libraw'].with_jpeg = 'libjpeg-turbo'
 
       # While Emscripten supports SIMD, Node.js does not and cannot run the resulting WASM bundle
       # The performance gain is not very significant and it has a huge compatibility issue
