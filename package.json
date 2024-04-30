@@ -1,0 +1,37 @@
+{
+    "main": "lib/binding.js",
+    "scripts": {
+        "pretest": "tsc",
+        "test": "node --napi-modules ./test/test_binding.js"
+    },
+    "gypfile": true,
+    "name": "pjsua2.js",
+    "description": "Native node module for pjsua2 library",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git+https://SemiConscious@github.com/SemiConscious/pjsua2.js.git"
+    },
+    "keywords": [
+        "pjsip",
+        "pjlib",
+        "pjsua",
+        "pjsua2",
+        "telephony",
+        "napi",
+        "native"
+    ],
+    "author": "jim.page@redmatter.com",
+    "license": "SEE LICENSE IN license",
+    "bugs": {
+        "url": "https://github.com/SemiConscious/pjsua2.js/issues"
+    },
+    "homepage": "https://github.com/SemiConscious/pjsua2.js#readme",
+    "dependencies": {
+        "node-addon-api": "^8.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.12.7",
+        "typescript": "^5.4.5"
+    }
+}
