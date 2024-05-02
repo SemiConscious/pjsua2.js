@@ -2,7 +2,8 @@
     "main": "lib/binding.js",
     "scripts": {
         "pretest": "tsc",
-        "test": "node --napi-modules ./test/test_binding.js"
+        "test": "node --napi-modules ./test/test_binding.js",
+        "build:dev": "tsc"
     },
     "gypfile": true,
     "name": "pjsua2.js",
