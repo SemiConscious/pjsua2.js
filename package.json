@@ -1,17 +1,18 @@
 {
+    "name": "@semiconscious/pjsua2.js",
+    "description": "Native node module for pjsua2 library",
+    "version": "0.0.1",
     "main": "lib/binding.js",
     "scripts": {
         "pretest": "tsc",
         "test": "node --napi-modules ./test/test_binding.js",
-        "build:dev": "tsc"
+        "build:dev": "tsc",
+        "install": "node-pre-gyp install --fallback-to-build"
     },
     "gypfile": true,
-    "name": "pjsua2.js",
-    "description": "Native node module for pjsua2 library",
-    "version": "0.0.1",
     "repository": {
         "type": "git",
-        "url": "git+https://SemiConscious@github.com/SemiConscious/pjsua2.js.git"
+        "url": "git+https://github.com/SemiConscious/pjsua2.js.git"
     },
     "keywords": [
         "pjsip",
@@ -29,10 +30,18 @@
     },
     "homepage": "https://github.com/SemiConscious/pjsua2.js#readme",
     "dependencies": {
-        "node-addon-api": "^8.0.0"
+        "@mapbox/node-pre-gyp": "^1.0.11",
+        "node-addon-api": "^8.0.0",
+        "node-pre-gyp-github": "^1.4.4"
     },
     "devDependencies": {
         "@types/node": "^20.12.7",
         "typescript": "^5.4.5"
+    },
+    "binary": {
+        "module_name": "pjsua2",
+        "module_path": "./dist",
+        "host": "https://github.com/SemiConscious/pjsua2.js/releases/download/",
+        "remote_path": "{version}"
     }
 }

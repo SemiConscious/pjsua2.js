@@ -24,7 +24,7 @@
       ]
     },
     {
-      'target_name': 'pjsua2.js-native',
+      'target_name': 'pjsua2',
       'sources': [ 'build/swig/pjsua2_wrap.cpp' ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
@@ -104,13 +104,18 @@
       'msvs_settings': {
         'VCCLCompilerTool': { 'ExceptionHandling': 1 },
       },
+    },{
+      'target_name': 'copy-dist-files',
+      'dependencies': ['pjsua2'],
+      'type': 'none',
       'copies': [{
         'destination': 'dist',
         'files': [
           'build/swig/binding.d.ts',
-          'lib/binding.js'
+          'lib/binding.js',
+          'build/Release/pjsua2.node'
         ]   
       }]
-    }
+    },
   ]
 }

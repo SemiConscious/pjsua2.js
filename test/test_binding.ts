@@ -40,7 +40,6 @@ async function testBasic() {
 
     // Initialize endpoint
     const ep_cfg = new EpConfig();
-    console.log(ep_cfg)
     ep.libInit(ep_cfg);
 
     // Create SIP transport. Error handling sample is shown
@@ -66,14 +65,14 @@ async function testBasic() {
     acfg.sipConfig.authCreds.add(cred)
 
     // Create the account
-    let acc: MyAccount | null = new MyAccount()
+    let acc = new MyAccount()
     acc.create(acfg);
 
     // Here we don't have anything else to do..
     await new Promise((resolve) => { setTimeout(() => resolve(true), 10000) })
 
-    // Delete the account. This will unregister from server
-    acc = null
+    ep.libDestroy();
+
     // assert.strictEqual(result, "world", "Unexpected value returned");
 }
 
@@ -90,4 +89,5 @@ async function runTests() {
     console.log("Tests passed- everything looks OK!");
 }
 
-runTests()
+runTests().then(() => { console.log('Finished') })
+

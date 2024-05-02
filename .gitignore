@@ -133,3 +133,5 @@ dist
 # built test files
 test/test_binding.d.ts
 test/test_binding.js
+
+sec
