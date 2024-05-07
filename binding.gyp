@@ -1,6 +1,7 @@
 {
   'variables': {
-      'arch': '<!(["uname", "-m"])'
+      'arch%': '<!(uname -m)',
+      'ccarch%': '<!(echo $CCARCH)'
   },
   'targets': [
     {
@@ -38,38 +39,41 @@
       'libraries': [
         # I want to do this but node-gyp tries to evaluate it at the start of the build
         # '>!@(["ls", "-1", "build/usr/lib/pj*.a"])'
-        "libg7221codec.a",
-        "libgsmcodec.a",
-        "libilbccodec.a",
-        "libpj.a",
-        "libpjlib-util.a",
-        "libpjmedia-audiodev.a",
-        "libpjmedia-codec.a",
-        "libpjmedia-videodev.a",
-        "libpjmedia.a",
-        "libpjnath.a",
-        "libpjsip-simple.a",
-        "libpjsip-ua.a",
-        "libpjsip.a",
-        "libpjsua.a",
-        "libpjsua2.a",
-        "libresample.a",
-        "libspeex.a",
-        "libsrtp.a",
-        "libwebrtc.a",
-        "libyuv.a",
+        "-lpjsua2",
+        "-lpjsua",
+        "-lpjsip-ua",
+        "-lpjsip-simple",
+        "-lpjsip",
+        "-lpjmedia-codec",
+        "-lpjmedia-videodev",
+        "-lpjmedia-audiodev",
+        "-lpjmedia",
+        "-lpjnath",
+        "-lpjlib-util",
+        "-lpj",
+        "-lsrtp",
+        "-lresample",
+        "-lgsmcodec",
+        "-lspeex",
+        "-lilbccodec",
+        "-lg7221codec",
+        "-lyuv",
+        "-lwebrtc",
       ],
       'conditions': [
-        [ 'OS=="mac"', 
+        [ 'arch=="aarch64" or arch=="arm64"', 
           {
-            'conditions': [
-                [ 'arch=="arm64"', {
-                  'defines': [
-                    'PJ_IS_LITTLE_ENDIAN=1',
-                    'PJ_IS_BIG_ENDIAN=0'
-                  ],
-                }]
+            'defines': [
+              'PJ_IS_LITTLE_ENDIAN=1',
+              'PJ_IS_BIG_ENDIAN=0'
             ],
+          }
+        ],
+        [ 'OS=="linux"', 
+          {
+            'libraries': [ 
+              "-luuid",
+            ]
           }
         ],
         [ 'OS=="mac"', 
@@ -96,6 +100,8 @@
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
+      'cflags': [ '-fPIC' ],
+      'cflags_cc': [ '-fexceptions' ],
       'xcode_settings': {
         'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
         'CLANG_CXX_LIBRARY': 'libc++',

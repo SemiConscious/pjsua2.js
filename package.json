@@ -7,7 +7,7 @@
         "pretest": "tsc",
         "test": "node --napi-modules ./test/test_binding.js",
         "build:dev": "tsc",
-        "install": "node-pre-gyp install --fallback-to-build"
+        "install": "node-pre-gyp install --verbose --fallback-to-build"
     },
     "gypfile": true,
     "repository": {
@@ -31,11 +31,11 @@
     "homepage": "https://github.com/SemiConscious/pjsua2.js#readme",
     "dependencies": {
         "@mapbox/node-pre-gyp": "^1.0.11",
-        "node-addon-api": "^8.0.0",
-        "node-pre-gyp-github": "^1.4.4"
+        "node-addon-api": "^8.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.12.7",
+        "node-pre-gyp-github": "^1.4.4",
         "typescript": "^5.4.5"
     },
     "binary": {
