@@ -2,8 +2,8 @@
     "name": "@semiconscious/pjsua2.js",
     "description": "Native node module for pjsua2 library",
     "version": "0.0.4",
-    "main": "dist/binding.js",
-    "types": "dist/binding.d.ts",
+    "main": "dist/pjsua2.js",
+    "types": "dist/pjsua2.d.ts",
     "scripts": {
         "pretest": "tsc",
         "test": "node --napi-modules ./test/test_binding.js",
