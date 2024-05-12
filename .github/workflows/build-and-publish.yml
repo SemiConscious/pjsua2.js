@@ -8,131 +8,81 @@ on:
   #   types: [created]
   workflow_dispatch:
 
-# jobs:
-  # buildx86:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
-  #     packages: write
-  #     deployments: write
-  #   env:
-  #     NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 20
-  #         registry-url: https://npm.pkg.github.com/
-  #     - uses: mmomtchev/setup-swig@v3
-  #       with:
-  #         branch: jse
-  #     - run: swig -version
-  #     # build x86_64 version, test, pack, package and native module
-  #     - run: npm i --ignore-scripts
-  #     - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
-  #     - run: npm run test
-  #     - run: npm publish
-  #     - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN node ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
-  #     # # build for mac, package and upload native module
-  #     # - run: sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-  #     # - run: apt-get install uuid-dev:arm64 --download-only
-  #     # - run: curl -s https://nodejs.org/download/release/$(node --version)/node-$(node --version)-linux-arm64.tar.gz > /tmp/nodearm64.tgz
-  #     # - run: npm i --ignore-scripts
-  #     # - run: CCARCH=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ CC_host="gcc" CXX_host="g++" ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package --tarball /tmp/nodearm64.tgz --arch=arm64
-  #     # - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN node ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release --arch=arm64
-
-  # archs:    
-  #   # The host should always be linux
-  #   runs-on: ubuntu-latest
-  #   name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
-  #   permissions:
-  #     contents: write
-  #     packages: write
-  #     deployments: write
-  #   env:
-  #     NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-  #   # Run steps on a matrix of 4 arch/distro combinations
-  #   strategy:
-  #     matrix:
-  #       include:
-  #         - arch: aarch64
-  #           distro: ubuntu_latest
-  #         # - arch: aarch64
-  #         #   distro: bullseye 
-  #         # - arch: ppc64le
-  #         #   distro: alpine_latest
-  #         # - arch: none
-  #         #   distro: none
-  #         #   base_image: riscv64/busybox
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     # - uses: actions/setup-node@v3
-  #     #   with:
-  #     #     node-version: 20
-  #     #     registry-url: https://npm.pkg.github.com/
-  #     # - uses: mmomtchev/setup-swig@v3
-  #     #   with:
-  #     #     branch: jse
-  #     - uses: uraimo/run-on-arch-action@v2
-  #       name: Build artifact
-  #       id: build
-  #       with:
-  #         arch: ${{ matrix.arch }}
-  #         distro: ${{ matrix.distro }}
-
-  #         # Not required, but speeds up builds
-  #         githubToken: ${{ github.token }}
-
-  #         # The shell to run commands with in the container
-  #         shell: /bin/sh
-
-  #         # do the build
-  #         run: |
-  #           apt-get update
-  #           apt-get install -y git autotools-dev autoconf libtool-bin libpcre2-dev
-  #           apt-get satisfy -y "nodejs (<< 21.0.0)"
-  #           git clone https://github.com/mmomtchev/swig.git && cd swig && ./autogen.sh && ./configure && make && make install && cd ..
-  #           swig -version
-  #           npm i --ignore-scripts
-  #           ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
-  #           npm run test
-  #           NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN node ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
-    
-
 jobs:
-  start-runner:
-      timeout-minutes: 5              # normally it only takes 1-2 minutes
-      name: Start self-hosted EC2 runner   
-      runs-on: ubuntu-latest
-      permissions:
-        actions: write        
-      steps:      
-        - name: Start EC2 runner
-          id: start-ec2-runner
-          uses: NextChapterSoftware/ec2-action-builder@v1.2
-          with:
-            github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-            aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws_iam_role_arn: ${{ secrets.ROLE_ARN }}
-            aws_region: ${{ secrets.AWS_REGION }}
-            ec2_instance_type: t4g.large
-            ec2_ami_id: ami-0c29a2c5cf69b5a9c # arm64 ubuntu 22.04
-            ec2_subnet_id: ${{ secrets.SUBNET_ID }}
-            ec2_security_group_id: ${{ secrets.SECURITY_GROUP_ID }}
-            ec2_instance_ttl: 40                # Optional (default is 60 minutes)
-            ec2_spot_instance_strategy: BestEffort    # Other options are: SpotOnly, BestEffort, MaxPerformance 
-            ec2_instance_tags: >                          # Required for IAM role resource permission scoping
-              [
-                {"Key": "Owner", "Value": "github-runner"}
-              ]
+
+  build-x86:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      deployments: write
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+      - uses: mmomtchev/setup-swig@v3
+        with:
+          branch: jse
+      - run: swig -version
+      # build x86_64 version, test, pack, package and native module
+      - run: npm i --ignore-scripts
+      # see https://github.com/bchr02/node-pre-gyp-github/pull/46
+      - name: Hack node-pre-gyp-github source
+        run: sed -i 's/cmd, //g' node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js
+      - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
+      - run: npm run test
+      - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
+      - run: rm dist/pjsua2.node
+      - run: npm pack
+      - run: npm publish
+
+  start-arm64:
+    timeout-minutes: 5              # normally it only takes 1-2 minutes
+    needs:
+      - build-x86
+    name: Start self-hosted EC2 runner   
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write        
+      contents: read
+      id-token: write
+    steps:      
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.ASSUME_ROLE_ARN }}
+          output-credentials: true
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: SemiConscious/ec2-action-builder@v1.2.1
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ vars.AWS_REGION }}
+          ec2_subnet_id: ${{ vars.SUBNET_ID }}
+          ec2_security_group_id: ${{ vars.SECURITY_GROUP_ID }}
+          ec2_instance_type: t4g.large
+          ec2_ami_id: ami-0c29a2c5cf69b5a9c # arm64 ubuntu 22.04
+          ec2_instance_ttl: 40                # Optional (default is 60 minutes)
+          ec2_spot_instance_strategy: BestEffort    # Other options are: None, SpotOnly, BestEffort, MaxPerformance 
+          ec2_instance_tags: >                          # Required for IAM role resource permission scoping
+            [
+              {"Key": "Owner", "Value": "runner-user"}
+            ]
               
   # Job that runs on the self-hosted runner 
-  run-build:
+  build-arm64:
       timeout-minutes: 15
       needs:
-        - start-runner
+        - start-arm64
       runs-on: ${{ github.run_id }}          
       permissions:
         contents: write
@@ -156,7 +106,9 @@ jobs:
         - run: swig -version
         # build native version, test, pack, package and native module
         - run: npm i --ignore-scripts
+        # see https://github.com/bchr02/node-pre-gyp-github/pull/46
+        - name: Hack node-pre-gyp-github source
+          run: sed -i 's/cmd, //g' node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js
         - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
         - run: npm run test
-        # - run: npm publish
-        - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN node ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
+        - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release

@@ -10,17 +10,11 @@ cd build/pjproject
 
 # build pjproject
 
-# cross compiling?
-EXTRACFLAGS=""
-if [[ "$CCARCH" != "" ]]; then
-    echo "Cross compiling: $CCARCH"
-    EXTRAFLAGS="--host=$CCARCH"
-    EXTRACFLAGS="-DTARGET_ARCHITECTURE=generic"
-fi
-
+CFLAGS="-fPIC"
+LDFLAGS=""
 cp pjlib/include/pj/config_site_sample.h pjlib/include/pj/config_site.h
 echo "#define PJMEDIA_HAS_VID_TOOLBOX_CODEC 1" >> pjlib/include/pj/config_site.h
-./configure --prefix=$PREFIX CFLAGS="-g -Og -fPIC $EXTRACFLAGS" LDFLAGS="-g" $EXTRAFLAGS
+./configure --prefix=$PREFIX CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 make -j 4
 make install
 
@@ -35,7 +29,6 @@ do
     COUNTER=$[$COUNTER+1]
 done
 for a in *.a ; do mv "$a" "$(echo $a | rev | cut -c $COUNTER- | rev).a" ; done
-cat pkgconfig/libpjproject.pc
 cd ../../pjproject
 
 # build the wrapper

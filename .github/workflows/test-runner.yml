@@ -1,0 +1,45 @@
+name: Test runner
+
+on:
+  # release:
+  #   types: [created]
+  workflow_dispatch:
+
+jobs:
+
+  start-arm64:
+    timeout-minutes: 5              # normally it only takes 1-2 minutes
+    name: Start self-hosted EC2 runner   
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write        
+      contents: read
+      id-token: write
+    steps:      
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.ASSUME_ROLE_ARN }}
+          output-credentials: true
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: SemiConscious/ec2-action-builder@v1.2.2
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          aws_access_key_id: ${{ steps.creds.outputs.aws-access-key-id }}
+          aws_secret_access_key: ${{ steps.creds.outputs.aws-secret-access-key }}
+          aws_session_token: ${{ steps.creds.outputs.aws-session-token }}
+          aws_region: ${{ vars.AWS_REGION }}
+          ec2_subnet_id: ${{ vars.SUBNET_ID }}
+          ec2_security_group_id: ${{ vars.SECURITY_GROUP_ID }}
+          ec2_instance_type: t4g.large
+          ec2_ami_id: ami-0c29a2c5cf69b5a9c # arm64 ubuntu 22.04
+          ec2_instance_ttl: 40                # Optional (default is 60 minutes)
+          ec2_spot_instance_strategy: BestEffort    # Other options are: None, SpotOnly, BestEffort, MaxPerformance 
+          ec2_instance_tags: >                          # Required for IAM role resource permission scoping
+            [
+              {"Key": "Owner", "Value": "runner-user"}
+            ]
+      

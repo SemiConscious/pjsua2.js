@@ -1,7 +1,6 @@
 {
   'variables': {
-      'arch%': '<!(uname -m)',
-      'ccarch%': '<!(echo $CCARCH)'
+      'arch%': '<!(uname -m)'
   },
   'targets': [
     {
@@ -118,7 +117,7 @@
         'destination': 'dist',
         'files': [
           'build/swig/binding.d.ts',
-          'lib/binding.js',
+          'src/binding.js',
           'build/Release/pjsua2.node'
         ]   
       }]
