@@ -30,17 +30,12 @@ jobs:
       - run: swig -version
       # build x86_64 version, test, pack, package and native module
       - run: npm i --ignore-scripts
-      - run: npm publish --dry-run
       # see https://github.com/bchr02/node-pre-gyp-github/pull/46
       - name: Hack node-pre-gyp-github source
         run: sed -i 's/cmd, //g' node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js
-      - run: npm publish --dry-run
       - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
-      - run: npm publish --dry-run
       - run: npm run test
-      - run: npm publish --dry-run
       - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
-      - run: npm publish --dry-run
       - run: rm dist/pjsua2.node
       - run: npm publish
 

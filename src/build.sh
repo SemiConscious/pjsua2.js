@@ -35,3 +35,11 @@ cd ../../pjproject
 
 mkdir -p ../swig
 swig -I../usr/include -javascript -napi -typescript -c++ -o ../swig/pjsua2_wrap.cpp pjsip-apps/src/swig/pjsua2.i
+mv ../swig/pjsua2.d.ts ../swig/binding.d.ts
+
+# work around issue where using node-gyp to copy files seems to turn the original into a symlink, which
+# breaks npm package!
+
+cd ../..
+mkdir -p build/binding
+cp src/binding.js build/binding

@@ -116,8 +116,8 @@
       'copies': [{
         'destination': 'dist',
         'files': [
-          'build/swig/pjsua2.d.ts',
-          'src/pjsua2.js',
+          'build/swig/binding.d.ts',
+          'build/binding/binding.js',
           'build/Release/pjsua2.node'
         ]   
       }]

@@ -1,3 +1,3 @@
 "use strict";
-const addon = require('./pjsua2');
+const addon = require('./binding');
 module.exports = addon;
