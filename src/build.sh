@@ -10,8 +10,17 @@ cd build/pjproject
 
 # build pjproject
 
-CFLAGS="-fPIC"
-LDFLAGS=""
+if [ "$BUILDTYPE" == "Debug" ] ; then
+    if [ "$(uname)" == "Darwin" ] ; then
+        CFLAGS="-fPIC -O0 -g"
+    else 
+        CFLAGS="-fPIC -0g -g"
+    fi
+    LDFLAGS="-g"
+else
+    CFLAGS="-fPIC"
+    LDFLAGS=""
+fi
 cp pjlib/include/pj/config_site_sample.h pjlib/include/pj/config_site.h
 echo "#define PJMEDIA_HAS_VID_TOOLBOX_CODEC 1" >> pjlib/include/pj/config_site.h
 ./configure --prefix=$PREFIX CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
@@ -34,8 +43,8 @@ cd ../../pjproject
 # build the wrapper
 
 mkdir -p ../swig
-swig -I../usr/include -javascript -napi -typescript -c++ -o ../swig/pjsua2_wrap.cpp pjsip-apps/src/swig/pjsua2.i
-mv ../swig/pjsua2.d.ts ../swig/binding.d.ts
+swig -v -I../usr/include -I../../src -javascript -napi -typescript -c++ -o ../swig/pjsua2_wrap.cpp ../../src/callback.i
+mv ../swig/callback.d.ts ../swig/binding.d.ts
 
 # work around issue where using node-gyp to copy files seems to turn the original into a symlink, which
 # breaks npm package!

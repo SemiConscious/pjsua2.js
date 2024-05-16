@@ -28,7 +28,8 @@
       'sources': [ 'build/swig/pjsua2_wrap.cpp' ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
-        "build/usr/include"
+        "build/usr/include",
+        "src"
       ],
       'link_settings': {
         'library_dirs': [
@@ -118,7 +119,7 @@
         'files': [
           'build/swig/binding.d.ts',
           'build/binding/binding.js',
-          'build/Release/pjsua2.node'
+          '<(PRODUCT_DIR)/pjsua2.node'
         ]   
       }]
     },
