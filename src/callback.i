@@ -1,3 +1,79 @@
+// macros that help with extending the callback classes
+#define CB_PASTE2(a,b) a ## b
+#define CB_PASTE3(a,b,c) a ## b ## c
+#define CB_PASTE4(a,b,c,d) a ## b ## c ## d
+#define CB_PTYPE(fun) On ## fun ## Param
+
+%define CB_IGNORE_PARENT(cls,fun)
+// ignore parent overridable callback fn
+%ignore CB_PASTE3(cls,::on,fun);
+%enddef
+
+// AccountCB
+
+CB_IGNORE_PARENT(Account, IncomingCall)
+CB_IGNORE_PARENT(Account, RegStarted)
+CB_IGNORE_PARENT(Account, RegState)
+CB_IGNORE_PARENT(Account, IncomingSubscribe)
+CB_IGNORE_PARENT(Account, InstantMessage)
+CB_IGNORE_PARENT(Account, InstantMessageStatus)
+CB_IGNORE_PARENT(Account, TypingIndication)
+CB_IGNORE_PARENT(Account, MwiInfo)
+
+// EndpointCB
+
+CB_IGNORE_PARENT(Endpoint, NatDetectionComplete)
+CB_IGNORE_PARENT(Endpoint, NatCheckStunServersComplete)
+CB_IGNORE_PARENT(Endpoint, TransportState)
+CB_IGNORE_PARENT(Endpoint, Timer)
+CB_IGNORE_PARENT(Endpoint, SelectAccount)
+CB_IGNORE_PARENT(Endpoint, IpChangeProgress)
+CB_IGNORE_PARENT(Endpoint, MediaEvent)
+CB_IGNORE_PARENT(Endpoint, CredAuth)
+CB_IGNORE_PARENT(Endpoint, RejectedIncomingCall)
+
+// CallCB
+
+CB_IGNORE_PARENT(Call, CallState)
+CB_IGNORE_PARENT(Call, CallTsxState)
+CB_IGNORE_PARENT(Call, CallMediaState)
+CB_IGNORE_PARENT(Call, CallSdpCreated)
+CB_IGNORE_PARENT(Call, StreamPreCreate)
+CB_IGNORE_PARENT(Call, StreamCreated)
+CB_IGNORE_PARENT(Call, StreamDestroyed)
+CB_IGNORE_PARENT(Call, DtmfDigit)
+CB_IGNORE_PARENT(Call, DtmfEvent)
+CB_IGNORE_PARENT(Call, CallTransferRequest)
+CB_IGNORE_PARENT(Call, CallTransferStatus)
+CB_IGNORE_PARENT(Call, CallReplaceRequest)
+CB_IGNORE_PARENT(Call, CallReplaced)
+CB_IGNORE_PARENT(Call, CallRxOffer)
+CB_IGNORE_PARENT(Call, CallRxReinvite)
+CB_IGNORE_PARENT(Call, CallTxOffer)
+CB_IGNORE_PARENT(Call, InstantMessage)
+CB_IGNORE_PARENT(Call, InstantMessageStatus)
+CB_IGNORE_PARENT(Call, TypingIndication)
+CB_IGNORE_PARENT(Call, CallRedirected)
+CB_IGNORE_PARENT(Call, CallMediaTransportState)
+CB_IGNORE_PARENT(Call, CallMediaEvent)
+CB_IGNORE_PARENT(Call, CreateMediaTransport)
+CB_IGNORE_PARENT(Call, CreateMediaTransportSrtp)
+
+// AudioMediaPortCB
+
+CB_IGNORE_PARENT(AudioMediaPort, FrameRequested)
+CB_IGNORE_PARENT(AudioMediaPort, FrameReceived)
+
+// AudioMediaPlayerCB
+
+CB_IGNORE_PARENT(AudioMediaPlayer, Eof2)
+
+// BuddyCB
+
+CB_IGNORE_PARENT(Buddy, BuddyState)
+CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
+
+
 %include "../build/pjproject/pjsip-apps/src/swig/pjsua2.i"
 
 %{
@@ -71,19 +147,11 @@ typedef Napi::Reference<Napi::Value> CBContext;
 }
 %enddef
 
-// macros that help with extending the callback classes
-#define CB_PASTE2(a,b) a ## b
-#define CB_PASTE3(a,b,c) a ## b ## c
-#define CB_PASTE4(a,b,c,d) a ## b ## c ## d
-#define CB_PTYPE(fun) On ## fun ## Param
-
 // call this with the parent class name (eg Account, not AccountCB)
 %define CB_MANAGE(cls,fun)
 // ignore CB function member and overridden callback
 %ignore CB_PASTE3(cls,CB::on,fun);
 %ignore CB_PASTE4(cls,CB::on,fun,CBFn);
-// ignore parent overridable callback fn
-%ignore CB_PASTE3(cls,::on,fun);
 %enddef
 
 // AccountCB
