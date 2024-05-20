@@ -87,18 +87,22 @@ typedef Napi::Reference<Napi::Value> CBContext;
 #define ASYNC_CALLBACK_SUPPORT
 %include <swig_napi_callback.i>
 
+// handle functions with void return and one argument
 %define CB_TYPEMAP(ParamType)
-%typemap(in, fragment="SWIG_NAPI_Callback_Void") std::function<void(ParamType &)> {
+%typemap(in, fragment="SWIG_NAPI_Callback") std::function<void(ParamType &)> {
   if (!$input.IsFunction()) {
     %argument_fail(SWIG_TypeError, "$type", $symname, $argnum);
   }
-  $1 = SWIG_NAPI_Callback_Void<ParamType &>(
+  $1 = SWIG_NAPI_Callback<void, ParamType &>(
     $input,
     std::function<void(Napi::Env, std::vector<napi_value> &, ParamType &)>(
       [](Napi::Env env, std::vector<napi_value> &js_args, ParamType &Param) -> void {
         $typemap(out, ParamType, 1=Param, result=js_args.at(0), argnum=callback argument 1);
       }
     ),
+    [](Napi::Env env, Napi::Value js_ret) -> std::function<void(void)> {
+      return []() -> void {};
+    },
     [](Napi::Env env, Napi::Function js_callback, const std::vector<napi_value> &js_args) -> Napi::Value {
       return js_callback.Call(env.Undefined(), js_args);
     }
@@ -106,6 +110,7 @@ typedef Napi::Reference<Napi::Value> CBContext;
 }
 %enddef
 
+// handle functions with non-void return and one argument
 %define CB_TYPEMAP_RET(ParamType, ReturnType)
 %typemap(in, fragment="SWIG_NAPI_Callback") std::function<ReturnType(ParamType &)> {
   if (!$input.IsFunction()) {
@@ -118,10 +123,10 @@ typedef Napi::Reference<Napi::Value> CBContext;
         $typemap(out, ParamType, 1=Param, result=js_args.at(0), argnum=callback argument 1);
       }
     ),
-    [&ecode1, &val1](Napi::Env env, Napi::Value js_ret) -> ReturnType {
+    [&ecode1, &val1](Napi::Env env, Napi::Value js_ret) -> std::function<ReturnType(void)> {
       ReturnType c_ret;
       $typemap(in, ReturnType, input=js_ret, 1=c_ret, argnum=JavaScript callback return value)
-      return c_ret;
+      return [c_ret]() -> ReturnType { return c_ret; };
     },
     [](Napi::Env env, Napi::Function js_callback, const std::vector<napi_value> &js_args) -> Napi::Value {
       return js_callback.Call(env.Undefined(), js_args);
@@ -130,16 +135,20 @@ typedef Napi::Reference<Napi::Value> CBContext;
 }
 %enddef
 
+// handle functions with void return and no arguments
 %define CB_TYPEMAP_VOID
-%typemap(in, fragment="SWIG_NAPI_Callback_Void") std::function<void(void)> {
+%typemap(in, fragment="SWIG_NAPI_Callback") std::function<void(void)> {
   if (!$input.IsFunction()) {
     %argument_fail(SWIG_TypeError, "$type", $symname, $argnum);
   }
-  $1 = SWIG_NAPI_Callback_Void<>(
+  $1 = SWIG_NAPI_Callback<void>(
     $input,
     std::function<void(Napi::Env, std::vector<napi_value> &)>(
       [](Napi::Env env, std::vector<napi_value> &js_args) -> void {}
     ),
+    [](Napi::Env env, Napi::Value js_ret) -> std::function<void(void)> {
+      return []() -> void {};
+    },
     [](Napi::Env env, Napi::Function js_callback, const std::vector<napi_value> &js_args) -> Napi::Value {
       return js_callback.Call(env.Undefined(), js_args);
     }
