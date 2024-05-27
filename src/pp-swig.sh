@@ -30,3 +30,6 @@ $SED -i -E 's/^(\s+)(result = (\([^(]+\)( &)?)?\((\([^)]+\))?arg1\)->([^(]+)\(((
 
 # void methods
 $SED -i -E 's/^(\s+)(\((\([^)]+\))?arg1\)->([^(]+)\((((\([^)]+\)\*?)?arg.|SWIG_STD_MOVE\(arg.\)),?)*\);)/\1\/\/\2\n\1mywrap_call([\&](){ \2 });/g w /dev/stdout' $OUTFILE
+
+# add pj_status_t typedef
+$SED -i '1i\export type pj_status_t = number;\n\n'
