@@ -79,6 +79,7 @@ CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
 
 %{
   #include <stack>
+  #include <condition_variable>
 
   // assumption - we are effectively single threaded so there should never
   // be more than one thread accessing a handler at once. Eg: when a callback
