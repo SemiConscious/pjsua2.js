@@ -2,11 +2,15 @@
 #define CB_PASTE2(a,b) a ## b
 #define CB_PASTE3(a,b,c) a ## b ## c
 #define CB_PASTE4(a,b,c,d) a ## b ## c ## d
+#define CB_PASTE6(a,b,c,d,e,f) a ## b ## c ## d ## e ## f
+#define CB_PASTE7(a,b,c,d,e,f,g) a ## b ## c ## d ## e ## f ## g
+#define CB_PASTE8(a,b,c,d,e,f,g,h) a ## b ## c ## d ## e ## f ## g ## h
 #define CB_PTYPE(fun) On ## fun ## Param
+#define CB_SETFUNC(cls,fun) cls ## ::on ## fun ## CB
 
 %define CB_IGNORE_PARENT(cls,fun)
 // ignore parent overridable callback fn
-%ignore CB_PASTE3(cls,::on,fun);
+%ignore CB_PASTE2("on",#fun);
 %enddef
 
 // AccountCB
@@ -73,6 +77,77 @@ CB_IGNORE_PARENT(AudioMediaPlayer, Eof2)
 CB_IGNORE_PARENT(Buddy, BuddyState)
 CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
 
+%{
+  #include <stack>
+
+  // assumption - we are effectively single threaded so there should never
+  // be more than one thread accessing a handler at once. Eg: when a callback
+  // is invoked, its handler is installed. When a call into the library happens
+  // during the callback, the JS thread invokes the PJSUA2 thread and locks until
+  // this function returns.
+
+  enum mywrap_op {
+    waiting,
+    job_ready,
+    returned
+  };
+
+  class mywrap_handler {
+    private:
+      std::mutex &m;
+      std::condition_variable &cv;
+      mywrap_op &op;
+      std::function<void()> fn;
+    public:
+      mywrap_handler(std::mutex &m, std::condition_variable &cv, mywrap_op &op) : m(m), cv(cv), op(op)  {}
+
+      void run_function() {
+        fn();
+      }
+
+      void run_job(std::function<void(void)> thefn) {
+        {
+          std::lock_guard lk(m);
+          fn = thefn;
+          op = job_ready;
+        }
+
+        // notify the worker we have one ready
+        cv.notify_one();
+        
+        {
+          std::unique_lock lock(m);
+          cv.wait(lock, [&op=this->op]{ 
+            return op == waiting; 
+          });
+        }
+      }
+  };
+
+  std::mutex mywrap_mutex;
+  std::stack<mywrap_handler *> mywrap_handlers;
+
+  void mywrap_push_handler(mywrap_handler *handler) {
+    std::lock_guard lk(mywrap_mutex);
+    mywrap_handlers.push(handler);
+  }
+
+  void mywrap_pop_handler() {
+    std::lock_guard lk(mywrap_mutex);
+    mywrap_handlers.pop();
+  }
+
+  void mywrap_call(std::function<void(void)> fn) { 
+    std::unique_lock lk(mywrap_mutex);
+    if (!mywrap_handlers.empty()) {
+      mywrap_handler *handler = mywrap_handlers.top();
+      handler->run_job(fn); 
+    } else {
+      lk.unlock();
+      fn();
+    }
+  }
+%}
 
 %include "../build/pjproject/pjsip-apps/src/swig/pjsua2.i"
 
@@ -80,8 +155,6 @@ CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
 #include "callback.hpp"
 
 #define ASYNC_CALLBACK_SUPPORT
-
-typedef Napi::Reference<Napi::Value> CBContext;
 %}
 
 #define ASYNC_CALLBACK_SUPPORT
@@ -157,10 +230,23 @@ typedef Napi::Reference<Napi::Value> CBContext;
 %enddef
 
 // call this with the parent class name (eg Account, not AccountCB)
-%define CB_MANAGE(cls,fun)
+%define CB_MANAGE_INNER(cls,fun,ret,cpparg,tsarg)
 // ignore CB function member and overridden callback
 %ignore CB_PASTE3(cls,CB::on,fun);
 %ignore CB_PASTE4(cls,CB::on,fun,CBFn);
+%typemap(ts) std::function<ret(cpparg)> fn CB_PASTE6("(",#tsarg,") => Promise<",#ret,"> | ",#ret);
+%enddef
+
+%define CB_MANAGE(cls,fun)
+CB_MANAGE_INNER(cls,fun,void,On ## fun ## Param ## &,prm: On ## fun ## Param)
+%enddef
+
+%define CB_MANAGE_RET(cls,fun,ret)
+CB_MANAGE_INNER(cls,fun,ret,On ## fun ## Param ## &,prm: On ## fun ## Param)
+%enddef
+
+%define CB_MANAGE_VOID(cls,fun)
+CB_MANAGE_INNER(cls,fun,void,void,)
 %enddef
 
 // AccountCB
@@ -202,7 +288,7 @@ CB_MANAGE(Endpoint, Timer)
 CB_MANAGE(Endpoint, SelectAccount)
 CB_MANAGE(Endpoint, IpChangeProgress)
 CB_MANAGE(Endpoint, MediaEvent)
-CB_MANAGE(Endpoint, CredAuth)
+CB_MANAGE_RET(Endpoint, CredAuth, pj_status_t)
 CB_MANAGE(Endpoint, RejectedIncomingCall)
 
 // CallCB
@@ -251,7 +337,7 @@ CB_MANAGE(Call, CallTxOffer)
 CB_MANAGE(Call, InstantMessage)
 CB_MANAGE(Call, InstantMessageStatus)
 CB_MANAGE(Call, TypingIndication)
-CB_MANAGE(Call, CallRedirected)
+CB_MANAGE_RET(Call, CallRedirected, pjsip_redirect_op)
 CB_MANAGE(Call, CallMediaTransportState)
 CB_MANAGE(Call, CallMediaEvent)
 CB_MANAGE(Call, CreateMediaTransport)
@@ -260,20 +346,20 @@ CB_MANAGE(Call, CreateMediaTransportSrtp)
 // AudioMediaPortCB
 
 CB_TYPEMAP(MediaFrame)
-CB_MANAGE(AudioMediaPort, FrameRequested)
-CB_MANAGE(AudioMediaPort, FrameReceived)
+CB_MANAGE_INNER(AudioMediaPort, FrameRequested, void, MediaFrame&, prm: MediaFrame)
+CB_MANAGE_INNER(AudioMediaPort, FrameReceived, void, MediaFrame&, prm: MediaFrame)
 
 // AudioMediaPlayerCB
 
 CB_TYPEMAP_VOID
-CB_MANAGE(AudioMediaPlayer, Eof2)
+CB_MANAGE_VOID(AudioMediaPlayer, Eof2)
 
 // BuddyCB
 
 //CB_TYPEMAP_VOID // only one of these needed
 CB_TYPEMAP(CB_PTYPE(BuddyEvSubState))
 
-CB_MANAGE(Buddy, BuddyState)
+CB_MANAGE_VOID(Buddy, BuddyState)
 CB_MANAGE(Buddy, BuddyEvSubState)
 
 %include "callback.hpp"

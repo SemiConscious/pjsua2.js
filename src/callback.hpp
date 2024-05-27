@@ -91,6 +91,9 @@ class EndpointCB: public Endpoint {
 
 class CallCB: public Call {
  public:
+    CallCB(Account &acc, int call_id):
+    Call(acc, call_id) 
+    {}
     void destroy() {
         DESTRUCT(CallState)
         DESTRUCT(CallTsxState)

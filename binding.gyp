@@ -19,13 +19,13 @@
           'message': 'building pjsua2 and bindings',
           'action': ['src/build.sh'],
           'inputs': ['build/pjproject'],
-          'outputs': ['build/swig/pjsua2_wrap.cpp']
+          'outputs': ['build/swig/pjsua2_wrap_post.cpp']
         }
       ]
     },
     {
       'target_name': 'pjsua2',
-      'sources': [ 'build/swig/pjsua2_wrap.cpp' ],
+      'sources': [ 'build/swig/pjsua2_wrap_post.cpp' ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
         "build/usr/include",

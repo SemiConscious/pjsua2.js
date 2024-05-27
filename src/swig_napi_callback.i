@@ -62,11 +62,12 @@
       std::function<RET(void)> c_ret;
       std::mutex m;
       std::condition_variable cv;
-      bool ready = false;
+      mywrap_op op = waiting;
+      mywrap_handler fnhandler = mywrap_handler(m, cv, op);
       std::runtime_error *rterr = nullptr;
 
       // This is the actual trampoline that allows call into JS
-      auto do_call = [&c_ret, &m, &cv, &ready, &rterr, tsfn, main_thread_id, worker_thread_id,
+      auto do_call = [&c_ret, &m, &cv, &op, &rterr, tsfn, main_thread_id, worker_thread_id,
         tmaps_in, tmap_out, call, &args...]
         (Napi::Env env, Napi::Function js_fn) {
         // Here we are back in the main V8 thread, potentially from an async context
@@ -89,7 +90,7 @@
             if (main_thread_id == worker_thread_id) {
               throw std::runtime_error{"Can't resolve a Promise when called synchronously"};
             }
-            napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &m, &cv, &ready, &rterr]
+            napi_value on_resolve = Napi::Function::New(env, [env, tmap_out, &c_ret, &m, &cv, &op, &rterr]
                 (const Napi::CallbackInfo &info) {
                 Napi::HandleScope store{env};
                 // Handle the JS return value
@@ -101,11 +102,11 @@
 
                 // Unblock the C++ thread
                 std::unique_lock<std::mutex> lock{m};
-                ready = true;
+                op = returned;
                 lock.unlock();
                 cv.notify_one();
               });
-            napi_value on_reject = Napi::Function::New(env, [env, &m, &cv, &ready, &rterr]
+            napi_value on_reject = Napi::Function::New(env, [env, &m, &cv, &op, &rterr]
                 (const Napi::CallbackInfo &info) {
                 Napi::HandleScope store{env};
                 // Handle exceptions
@@ -113,7 +114,7 @@
 
                 // Unblock the C++ thread
                 std::unique_lock<std::mutex> lock{m};
-                ready = true;
+                op = returned;
                 lock.unlock();
                 cv.notify_one();
               });
@@ -132,10 +133,12 @@
 
         // Unblock the C++ thread
         std::unique_lock<std::mutex> lock{m};
-        ready = true;
+        op = returned;
         lock.unlock();
         cv.notify_one();
       };
+
+      mywrap_push_handler(&fnhandler);
 
       // Are we in the thread pool background thread (V8 is not accessible) or not?
       // (this is what allows this typemap to work in both sync and async mode)
@@ -150,8 +153,25 @@
       }
 
       // This is a barrier
-      std::unique_lock<std::mutex> lock{m};
-      cv.wait(lock, [&ready]{ return ready; });
+      while(true) {
+        std::unique_lock lock(m);
+        cv.wait(lock, [&op]{
+          return op != waiting; 
+        });
+
+        if (op == job_ready) {
+          // there is a function we need to process
+          fnhandler.run_function();
+          op = waiting;
+          lock.unlock();
+          cv.notify_one();
+        } else {
+          // if we get here with a null function it means the function has returned
+          break;
+        }
+      }
+
+      mywrap_pop_handler();
 
       if (rterr != nullptr) {
         std::runtime_error err = *rterr;

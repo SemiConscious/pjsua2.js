@@ -44,6 +44,7 @@ cd ../../pjproject
 
 mkdir -p ../swig
 swig -v -I../usr/include -I../../src -javascript -napi -typescript -c++ -o ../swig/pjsua2_wrap.cpp ../../src/callback.i
+../../src/pp-swig.sh
 mv ../swig/callback.d.ts ../swig/binding.d.ts
 
 # work around issue where using node-gyp to copy files seems to turn the original into a symlink, which
