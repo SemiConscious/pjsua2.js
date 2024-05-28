@@ -155,9 +155,11 @@
       // This is a barrier
       while(true) {
         std::unique_lock lock(m);
-        cv.wait(lock, [&op]{
-          return op != waiting; 
-        });
+        do {
+          cv.wait_for(lock, std::chrono::milliseconds(100), [&op]{
+            return op != waiting; 
+          });
+        } while (op == waiting);
 
         if (op == job_ready) {
           // there is a function we need to process
@@ -171,7 +173,7 @@
         }
       }
 
-      mywrap_pop_handler();
+      mywrap_pop_handler(&fnhandler);
 
       if (rterr != nullptr) {
         std::runtime_error err = *rterr;

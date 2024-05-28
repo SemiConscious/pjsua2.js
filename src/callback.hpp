@@ -7,6 +7,7 @@ using namespace pj;
 #define CB_TYPE(fun) std::function<void(On ## fun ## Param &)>
 #define CB_TYPERET(fun,ret) std::function<ret(On ## fun ## Param &)>
 #define CB_TYPESPEC(prm) std::function<void(prm &)>
+#define CB_TYPESPECRET(prm) std::function<prm(prm &)>
 #define CB_TYPEVOID std::function<void(void)>
 
 // default callback implementation. Parent callback is not const, no return value
@@ -29,6 +30,12 @@ virtual void on ## fun(const On ## fun ## Param &prm) { if (on ## fun ## CBFn) {
 #define CB_IMPLTYPESPEC(fun,type) CB_TYPESPEC(type) on ## fun ## CBFn; \
 void set ## fun ## CB(CB_TYPESPEC(type) fn) { on ## fun ## CBFn = fn; } \
 virtual void on ## fun(type &prm) { if (on ## fun ## CBFn) { on ## fun ## CBFn(prm); } }
+
+// same as default but the type of the parent parameter is different. The parameter is returned
+// and this is copied back into the callback's parameter.
+#define CB_IMPLTYPESPECRET(fun,type) CB_TYPESPECRET(type) on ## fun ## CBFn; \
+void set ## fun ## CB(CB_TYPESPECRET(type) fn) { on ## fun ## CBFn = fn; } \
+virtual void on ## fun(type &prm) { if (on ## fun ## CBFn) { prm = on ## fun ## CBFn(prm); } }
 
 // callback function is void/void
 #define CB_IMPLTYPEVOID(fun) CB_TYPEVOID on ## fun ## CBFn; \
@@ -158,7 +165,7 @@ class AudioMediaPortCB: public AudioMediaPort {
     ~AudioMediaPortCB() {
         destroy();
     }
-    CB_IMPLTYPESPEC(FrameRequested, MediaFrame)
+    CB_IMPLTYPESPECRET(FrameRequested, MediaFrame)
     CB_IMPLTYPESPEC(FrameReceived, MediaFrame)
 };
 

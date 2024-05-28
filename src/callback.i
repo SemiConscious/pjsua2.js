@@ -78,7 +78,7 @@ CB_IGNORE_PARENT(Buddy, BuddyState)
 CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
 
 %{
-  #include <stack>
+  #include <set>
   #include <condition_variable>
 
   // assumption - we are effectively single threaded so there should never
@@ -126,22 +126,22 @@ CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
   };
 
   std::mutex mywrap_mutex;
-  std::stack<mywrap_handler *> mywrap_handlers;
+  std::set<mywrap_handler *> mywrap_handlers;
 
   void mywrap_push_handler(mywrap_handler *handler) {
     std::lock_guard lk(mywrap_mutex);
-    mywrap_handlers.push(handler);
+    mywrap_handlers.insert(handler);
   }
 
-  void mywrap_pop_handler() {
+  void mywrap_pop_handler(mywrap_handler *handler) {
     std::lock_guard lk(mywrap_mutex);
-    mywrap_handlers.pop();
+    mywrap_handlers.erase(handler);
   }
 
   void mywrap_call(std::function<void(void)> fn) { 
     std::unique_lock lk(mywrap_mutex);
     if (!mywrap_handlers.empty()) {
-      mywrap_handler *handler = mywrap_handlers.top();
+      mywrap_handler *handler = *(mywrap_handlers.begin());
       handler->run_job(fn); 
     } else {
       lk.unlock();
@@ -197,7 +197,7 @@ CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
         $typemap(out, ParamType, 1=Param, result=js_args.at(0), argnum=callback argument 1);
       }
     ),
-    [&ecode1, &val1](Napi::Env env, Napi::Value js_ret) -> std::function<ReturnType(void)> {
+    [&](Napi::Env env, Napi::Value js_ret) -> std::function<ReturnType(void)> {
       ReturnType c_ret;
       $typemap(in, ReturnType, input=js_ret, 1=c_ret, argnum=JavaScript callback return value)
       return [c_ret]() -> ReturnType { return c_ret; };
@@ -347,7 +347,8 @@ CB_MANAGE(Call, CreateMediaTransportSrtp)
 // AudioMediaPortCB
 
 CB_TYPEMAP(MediaFrame)
-CB_MANAGE_INNER(AudioMediaPort, FrameRequested, void, MediaFrame&, prm: MediaFrame)
+CB_TYPEMAP_RET(MediaFrame, MediaFrame)
+CB_MANAGE_INNER(AudioMediaPort, FrameRequested, MediaFrame, MediaFrame&, prm: MediaFrame)
 CB_MANAGE_INNER(AudioMediaPort, FrameReceived, void, MediaFrame&, prm: MediaFrame)
 
 // AudioMediaPlayerCB
