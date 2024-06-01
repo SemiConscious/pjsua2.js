@@ -21,9 +21,18 @@ else
     CFLAGS="-fPIC"
     LDFLAGS=""
 fi
+CONFIGUREFLAGS=""
+if [ "$(uname)" == "Darwin" ] ; then
+    FFMPEGPATH="/opt/homebrew/Cellar/ffmpeg/$(ls -1 /opt/homebrew/Cellar/ffmpeg/)"
+    SDLPATH="/opt/homebrew/Cellar/sdl2/$(ls -1 /opt/homebrew/Cellar/sdl2/)"
+    OPENH264PATH="/opt/homebrew/Cellar/openh264/$(ls -1 /opt/homebrew/Cellar/openh264/)"
+    CFLAGS+=" -I$FFMPEGPATH/include -I$SDLPATH/include -I$OPENH264PATH/include"
+    # LDFLAGS+=" -L$FFMPEGPATH/lib -L$SDLPATH/lib -L$OPENH264PATH/lib"
+    # LDFLAGS+=" -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lpostproc -lswresample -lswscale"
+fi
 cp pjlib/include/pj/config_site_sample.h pjlib/include/pj/config_site.h
-echo "#define PJMEDIA_HAS_VID_TOOLBOX_CODEC 1" >> pjlib/include/pj/config_site.h
-./configure --prefix=$PREFIX CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+echo "#define PJMEDIA_HAS_VIDEO 1" >> pjlib/include/pj/config_site.h
+./configure --prefix=$PREFIX CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" $CONFIGUREFLAGS
 make -j 4
 make install
 

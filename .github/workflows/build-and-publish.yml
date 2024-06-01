@@ -28,6 +28,8 @@ jobs:
         with:
           branch: jse
       - run: swig -version
+      - run: apt-get update
+      - run: apt-get install -y SDL2-devel ffmpeg-devel OpenH264 libyuv-devel libv4l2
       # build x86_64 version, test, pack, package and native module
       - run: npm i --ignore-scripts
       # see https://github.com/bchr02/node-pre-gyp-github/pull/46
@@ -98,6 +100,7 @@ jobs:
             registry-url: https://npm.pkg.github.com/
         - run: apt-get update
         - run: apt-get install -y libpcre2-dev autotools-dev autoconf libtool-bin g++ make bison uuid-dev
+        - run: apt-get install -y SDL2-devel ffmpeg-devel OpenH264 libyuv-devel libv4l2
         - run: npm i -g node-gyp node-addon-api
         - uses: mmomtchev/setup-swig@v3
           with:

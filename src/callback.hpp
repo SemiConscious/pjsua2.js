@@ -1,6 +1,7 @@
 #ifndef __CALLBACK_HPP__
 #define __CALLBACK_HPP__
 
+#include "videomediaport.hpp"
 #include "pjsua2.hpp"
 using namespace pj;
 
@@ -167,6 +168,35 @@ class AudioMediaPortCB: public AudioMediaPort {
     }
     CB_IMPLTYPESPECRET(FrameRequested, MediaFrame)
     CB_IMPLTYPESPEC(FrameReceived, MediaFrame)
+    
+    // std::function<void(MediaFrame &)> onFrameReceivedCBFn;
+    // void setFrameReceivedCB(std::function<void(MediaFrame &)> fn) { onFrameReceivedArrayBufferCBFn = fn; } \
+    // virtual void onFrameReceived(MediaFrame &prm) { 
+    //     if (onFrameReceivedCBFn) { 
+    //         onFrameReceivedCBFn(prm); 
+    //     } 
+    // }
+};
+
+class VideoMediaPortCB: public VideoMediaPort {
+ public:
+    void destroy() {
+        DESTRUCT(FrameRequested)
+        DESTRUCT(FrameReceived)
+    }
+    ~VideoMediaPortCB() {
+        destroy();
+    }
+    CB_IMPLTYPESPECRET(FrameRequested, MediaFrame)
+    CB_IMPLTYPESPEC(FrameReceived, MediaFrame)
+    
+    // std::function<void(MediaFrame &)> onFrameReceivedCBFn;
+    // void setFrameReceivedCB(std::function<void(MediaFrame &)> fn) { onFrameReceivedArrayBufferCBFn = fn; } \
+    // virtual void onFrameReceived(MediaFrame &prm) { 
+    //     if (onFrameReceivedCBFn) { 
+    //         onFrameReceivedCBFn(prm); 
+    //     } 
+    // }
 };
 
 class AudioMediaPlayerCB: public AudioMediaPlayer {
@@ -192,7 +222,5 @@ class BuddyCB: public Buddy {
     CB_IMPLTYPEVOID(BuddyState) // void
     CB_IMPL(BuddyEvSubState) // OnBuddyEvSubStateParam
 };
-
-
 
 #endif

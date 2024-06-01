@@ -153,6 +153,7 @@ CB_IGNORE_PARENT(Buddy, BuddyEvSubState)
 %include "../build/pjproject/pjsip-apps/src/swig/pjsua2.i"
 
 %{
+#include "videomediaport.hpp"
 #include "callback.hpp"
 
 #define ASYNC_CALLBACK_SUPPORT
@@ -351,6 +352,13 @@ CB_TYPEMAP_RET(MediaFrame, MediaFrame)
 CB_MANAGE_INNER(AudioMediaPort, FrameRequested, MediaFrame, MediaFrame&, prm: MediaFrame)
 CB_MANAGE_INNER(AudioMediaPort, FrameReceived, void, MediaFrame&, prm: MediaFrame)
 
+// VideoMediaPortCB
+
+// CB_TYPEMAP(MediaFrame)
+// CB_TYPEMAP_RET(MediaFrame, MediaFrame)
+CB_MANAGE_INNER(VideoMediaPort, FrameRequested, MediaFrame, MediaFrame&, prm: MediaFrame)
+CB_MANAGE_INNER(VideoMediaPort, FrameReceived, void, MediaFrame&, prm: MediaFrame)
+
 // AudioMediaPlayerCB
 
 CB_TYPEMAP_VOID
@@ -364,5 +372,6 @@ CB_TYPEMAP(CB_PTYPE(BuddyEvSubState))
 CB_MANAGE_VOID(Buddy, BuddyState)
 CB_MANAGE(Buddy, BuddyEvSubState)
 
+%include "videomediaport.hpp"
 %include "callback.hpp"
 

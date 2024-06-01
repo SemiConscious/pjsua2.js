@@ -59,6 +59,13 @@
         "-lg7221codec",
         "-lyuv",
         "-lwebrtc",
+        "-lavdevice",
+        "-lavformat",
+        "-lavcodec",
+        "-lswscale",
+        "-lavutil",
+        "-lopenh264",
+        "-lSDL2",
       ],
       'conditions': [
         [ 'arch=="aarch64" or arch=="arm64"', 
@@ -92,7 +99,10 @@
               "-framework CoreMedia",
               "-framework Metal",
               "-framework MetalKit",
-              "-framework VideoToolbox"
+              "-framework VideoToolbox",
+              "-L/opt/homebrew/Cellar/ffmpeg/<!(ls -1 /opt/homebrew/Cellar/ffmpeg/)/lib",
+              "-L/opt/homebrew/Cellar/sdl2/<!(ls -1 /opt/homebrew/Cellar/sdl2/)/lib",
+              "-L/opt/homebrew/Cellar/openh264/<!(ls -1 /opt/homebrew/Cellar/openh264/)/lib"
             ]
           } 
         ]
