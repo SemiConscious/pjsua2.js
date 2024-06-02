@@ -72,7 +72,7 @@ jobs:
           ec2_subnet_id: ${{ vars.SUBNET_ID }}
           ec2_security_group_id: ${{ vars.SECURITY_GROUP_ID }}
           ec2_instance_type: t4g.large
-          ec2_ami_id: ami-0c29a2c5cf69b5a9c # arm64 ubuntu 22.04
+          ec2_ami_id: ami-0b74dcc00bb584e51 # arm64 ubuntu 22.04
           ec2_instance_ttl: 40                # Optional (default is 60 minutes)
           ec2_spot_instance_strategy: BestEffort    # Other options are: None, SpotOnly, BestEffort, MaxPerformance 
           ec2_instance_tags: >                          # Required for IAM role resource permission scoping
