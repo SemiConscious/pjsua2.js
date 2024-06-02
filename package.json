@@ -1,7 +1,7 @@
 {
     "name": "@semiconscious/pjsua2.js",
     "description": "Native node module for pjsua2 library",
-    "version": "0.0.9",
+    "version": "0.21401.10",
     "main": "dist/binding.js",
     "types": "dist/binding.d.ts",
     "scripts": {
