@@ -1,6 +1,7 @@
 {
   'variables': {
-      'arch%': '<!(uname -m)'
+      'arch%': '<!(uname -m)',
+      'PJSUA2VER': '2.14.1'
   },
   'targets': [
     {
@@ -39,33 +40,33 @@
       'libraries': [
         # I want to do this but node-gyp tries to evaluate it at the start of the build
         # '>!@(["ls", "-1", "build/usr/lib/pj*.a"])'
-        "-lpjsua2",
-        "-lpjsua",
-        "-lpjsip-ua",
-        "-lpjsip-simple",
-        "-lpjsip",
-        "-lpjmedia-codec",
-        "-lpjmedia-videodev",
-        "-lpjmedia-audiodev",
-        "-lpjmedia",
-        "-lpjnath",
-        "-lpjlib-util",
-        "-lpj",
-        "-lsrtp",
-        "-lresample",
-        "-lgsmcodec",
-        "-lspeex",
-        "-lilbccodec",
-        "-lg7221codec",
-        "-lyuv",
-        "-lwebrtc",
-        "-lavdevice",
-        "-lavformat",
-        "-lavcodec",
-        "-lswscale",
-        "-lavutil",
-        "-lopenh264",
-        "-lSDL2",
+        "-l:libpjsua2.a",
+        "-l:libpjsua.a",
+        "-l:libpjsip-ua.a",
+        "-l:libpjsip-simple.a",
+        "-l:libpjsip.a",
+        "-l:libpjmedia-codec.a",
+        "-l:libpjmedia-videodev.a",
+        "-l:libpjmedia-audiodev.a",
+        "-l:libpjmedia.a",
+        "-l:libpjnath.a",
+        "-l:libpjlib-util.a",
+        "-l:libpj.a",
+        "-l:libsrtp.a",
+        "-l:libresample.a",
+        "-l:libgsmcodec.a",
+        "-l:libspeex.a",
+        "-l:libilbccodec.a",
+        "-l:libg7221codec.a",
+        "-l:libyuv.a",
+        "-l:libwebrtc.a",
+        "-l:libavdevice.a",
+        "-l:libavformat.a",
+        "-l:libavcodec.a",
+        "-l:libswscale.a",
+        "-l:libavutil.a",
+        "-l:libopenh264.a",
+        "-l:libSDL2.a",
       ],
       'conditions': [
         [ 'arch=="aarch64" or arch=="arm64"', 
@@ -79,7 +80,7 @@
         [ 'OS=="linux"', 
           {
             'libraries': [ 
-              "-luuid",
+              "-l:libuuid.a",
             ]
           }
         ],

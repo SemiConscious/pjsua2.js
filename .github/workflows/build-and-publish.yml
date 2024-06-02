@@ -17,8 +17,8 @@ jobs:
       contents: write
       packages: write
       deployments: write
-    env:
-      NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    # env:
+    #   NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -38,7 +38,7 @@ jobs:
         run: sed -i 's/cmd, //g' node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js
       - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
       - run: npm run test
-      - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
+      - run: NODE_PRE_GYP_GITHUB_TOKEN=${{ github.token }} ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
       - run: rm dist/pjsua2.node
       - run: npm publish
 
@@ -90,8 +90,8 @@ jobs:
         contents: write
         packages: write
         deployments: write
-      env:
-        NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      # env:
+      #   NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       steps:              
         - run: env
         - uses: actions/checkout@v4
@@ -114,4 +114,4 @@ jobs:
           run: sed -i 's/cmd, //g' node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js
         - run: ./node_modules/@mapbox/node-pre-gyp/bin/node-pre-gyp rebuild package
         - run: npm run test
-        - run: NODE_PRE_GYP_GITHUB_TOKEN=$NODE_AUTH_TOKEN ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
+        - run: NODE_PRE_GYP_GITHUB_TOKEN=${{ github.token }} ./node_modules/node-pre-gyp-github/bin/node-pre-gyp-github.js publish --release
