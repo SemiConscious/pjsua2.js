@@ -12,7 +12,7 @@ on:
 jobs:
 
   build-x86:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       packages: write
@@ -47,7 +47,7 @@ jobs:
     needs:
       - build-x86
     name: Start self-hosted EC2 runner   
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       actions: write        
       contents: read
